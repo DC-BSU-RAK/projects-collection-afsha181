@@ -1,33 +1,41 @@
-# Element Alchemy
+# Mood Journal
 
-A single-view Android app for the Projects Collection brief's "creative calculator that doesn't calculate numbers."
+A multiple-view Android app for the Projects Collection brief, with basic storage of user preferences.
 
 ## Concept
-Element Alchemy borrows the *look and interaction pattern* of a calculator — a keypad grid feeding a display — but replaces arithmetic with an invented system of elemental fusion. Six primal elements (Fire, Water, Earth, Air, Light, Shadow) can be combined two at a time. Each of the 21 possible combinations resolves to an original, hand-authored result (name + one-line description + emoji), e.g. Fire + Shadow = **Ember**, "a flame that refuses to die in the dark."
+Mood Journal treats feelings like passing weather rather than fixed labels. Three tabs:
+- **Log** — tap one of eight moods, add an optional one-line note, save it.
+- **History** — a scrollable, timestamped record of everything you've logged (newest first).
+- **Settings** — set a display name, pick an accent colour, and toggle a daily reminder preference. These are the app's **stored user preferences**, persisted with `SharedPreferences` so they survive app restarts.
 
-This is the app's Unique Selling Point: the calculator metaphor is repurposed for a poetic/lexical output instead of a numeric one.
+The Unique Selling Point is the low-pressure framing (no scores, streaks or gamification — see the `data-analysis`-free `MoodRepository`) combined with a genuinely persistent, personalised settings layer rather than a cosmetic one.
 
 ## Required elements from the brief
-- **Single-view app**: everything happens in `MainActivity` / `activity_main.xml`.
-- **Creative, non-numeric calculator**: the element grid + display, see `Fusions` table in `MainActivity.kt`.
-- **Informative pop-up (modal) view**: tap the ⓘ icon top-right to open `InfoDialogFragment`, a true `DialogFragment`, not a system alert.
-- **Custom launch screen**: `Theme.ElementAlchemy.Splash` + `ic_launch_symbol.xml` (an original alchemy sigil), wired up with `androidx.core.splashscreen`.
-- **Custom app icon**: adaptive icon built from `ic_launcher_background.xml` / `ic_launcher_foreground.xml` (same sigil motif).
+- **Multiple-view app**: `MainActivity` hosts three fragments (`LogFragment`, `HistoryFragment`, `SettingsFragment`) switched via a `BottomNavigationView`.
+- **Storage of basic preferences**: `SettingsFragment` + `MoodRepository` — display name, accent colour key, and reminder toggle are written to and read from `SharedPreferences`.
+- **Informative pop-up (modal) view**: the ⓘ icon in the toolbar opens `InfoDialogFragment`, a true `DialogFragment`.
+- **Custom launch screen**: `Theme.MoodJournal.Splash` + `ic_launch_symbol.xml` (an original "mood-wave journal" mark), via `androidx.core.splashscreen`.
+- **Custom app icon**: adaptive icon built from `ic_launcher_background.xml` / `ic_launcher_foreground.xml`, same mark.
 
 ## How to open
 1. Open Android Studio (Koala/Ladybug or newer recommended).
 2. `File > Open` and select this project's root folder (the one containing `settings.gradle.kts`).
-3. Let Gradle sync (requires network access the first time, to download Gradle 8.6 and the AGP/Kotlin plugins).
+3. Let Gradle sync (requires network access the first time).
 4. Run on an emulator or device with **API 26+**.
 
 ## Project structure
 ```
-app/src/main/java/com/example/elementalchemy/
-  MainActivity.kt          – UI wiring, fusion state machine
-  InfoDialogFragment.kt    – the modal info view
+app/src/main/java/com/example/moodjournal/
+  MainActivity.kt              – bottom-nav shell, splash, modal trigger
+  data/MoodEntry.kt            – Mood enum + MoodEntry model
+  data/MoodRepository.kt       – SharedPreferences-backed storage (entries + prefs)
+  ui/LogFragment.kt            – mood grid + note + save
+  ui/HistoryFragment.kt        – RecyclerView of past entries
+  ui/SettingsFragment.kt       – preference storage UI
+  ui/InfoDialogFragment.kt     – the modal info view
+  ui/MoodAdapter.kt            – RecyclerView adapter
 app/src/main/res/
-  layout/activity_main.xml – the single view
-  layout/dialog_info.xml   – the modal's layout
+  layout/                      – activity_main, fragment_log, fragment_history,
+                                  fragment_settings, item_mood_entry, dialog_info
   drawable/ic_launch_symbol.xml, ic_launcher_*.xml – custom art
-  values/                  – strings, colors, themes (incl. splash theme)
 ```

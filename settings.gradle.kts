@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ElementAlchemy"
+rootProject.name = "MoodJournal"
 include(":app")
